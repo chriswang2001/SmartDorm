@@ -1,9 +1,11 @@
+#include "dorm1.h"
+
 #include <WiFi.h>
 #include <WiFiClient.h>
 #include <WebServer.h>
 #include <ESPmDNS.h>
 #include <Update.h>
-#include "dorm1.h"
+#include <Blinker.h>
 
 WebServer server(80);
 
@@ -55,7 +57,7 @@ void setup(void) {
   Serial.begin(115200);
 
   // Connect to WiFi network
-  WiFi.begin(ssid, password);
+  WiFi.begin(ssid, pswd);
   Serial.println("");
 
   // Wait for connection
@@ -107,10 +109,16 @@ void setup(void) {
       }
     }
   });
-  server.begin();
+  server.begin(); 
+
+  // 初始化blinker
+  BLINKER_DEBUG.stream(Serial);
+  BLINKER_DEBUG.debugAll();
+  Blinker.begin(auth, ssid, pswd);
 }
 
 void loop(void) {
   server.handleClient();
+  Blinker.run();
   delay(1);
 }
