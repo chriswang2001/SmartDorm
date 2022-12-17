@@ -1,6 +1,7 @@
 #include <WiFi.h>
 
 #include "blinker.h"
+#include "door.h"
 #include "dorm1.h"
 #include "light.h"
 #include "ota.h"
@@ -29,6 +30,7 @@ void setup(void) {
     otaSetup();
 
     lightSetup();
+    doorSetup();
 
     blinkerSetup();
 }

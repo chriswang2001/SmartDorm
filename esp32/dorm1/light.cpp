@@ -2,6 +2,9 @@
 
 #include <Arduino.h>
 
+bool light = false;
+bool light_on = false;
+bool light_off = false;
 bool light_state = false;
 
 void lightWrite(int light1_duty, int light2_duty) {
@@ -25,9 +28,11 @@ void lightNeu() {
 }
 
 void lightSetup() {
-    ledcSetup(light1_channel, freq, resolution);
-    ledcSetup(light2_channel, freq, resolution);
+    ledcSetup(light1_channel, light_freq, light_resolution);
+    ledcSetup(light2_channel, light_freq, light_resolution);
 
-    ledcAttachPin(light1, light1_channel);
-    ledcAttachPin(light2, light2_channel);
+    ledcAttachPin(light1_pin, light1_channel);
+    ledcAttachPin(light2_pin, light2_channel);
+
+    pinMode(brightness_pin, INPUT);
 }
