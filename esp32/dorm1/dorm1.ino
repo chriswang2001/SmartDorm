@@ -5,7 +5,6 @@
 #include "dorm1.h"
 #include "finger.h"
 #include "light.h"
-#include "msg.h"
 #include "ota.h"
 
 /*

@@ -13,3 +13,6 @@ const IPAddress remote_ip1(192, 168, 1, 100);
 const IPAddress remote_ip2(192, 168, 1, 109);
 const IPAddress remote_ip3(192, 168, 1, 106);
 const IPAddress remote_ip4(192, 168, 1, 112);
+
+// 自动控制定时器循环时间 s
+const int auto_time = 600;

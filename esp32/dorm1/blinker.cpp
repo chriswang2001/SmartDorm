@@ -5,10 +5,14 @@
 
 #include <Blinker.h>
 #include <ESP32Ping.h>
+#include <Ticker.h>
 
 #include "door.h"
 #include "dorm1.h"
 #include "light.h"
+#include "msg.h"
+
+Ticker autoTicker;
 
 BlinkerButton DOOR("door");
 BlinkerButton LIGHT("light");
@@ -22,6 +26,16 @@ BlinkerText IP3("ip3");
 BlinkerText IP4("ip4");
 
 bool fresh_ip = false;
+
+void autoCallback() {
+    if (Blinker.hour() == 0 && Blinker.minute() <= (auto_time / 60)) {
+        light_off = true;
+    } else if (light_state == false && Blinker.hour() > hour_on &&
+               analogRead(brightness_pin) > brightness_on &&
+               true == pingCheck()) {
+        light_on = true;
+    }
+}
 
 void freshIPCallback(const String &state) {
     BLINKER_LOG("get button state: ", state);
@@ -223,6 +237,7 @@ void blinkerSetup() {
     Blinker.attachData(dataRead);
     Blinker.attachHeartbeat(heartbeat);
 
+    autoTicker.attach(auto_time, autoCallback);
     DOOR.attach(doorCallback);
     LIGHT.attach(lightCallback);
     FRESH_IP.attach(freshIPCallback);
