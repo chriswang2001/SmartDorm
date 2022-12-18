@@ -4,6 +4,7 @@
 #include "blinker.h"
 
 #include <Blinker.h>
+#include <ESP32Ping.h>
 
 #include "door.h"
 #include "dorm1.h"
@@ -13,6 +14,69 @@ BlinkerButton DOOR("door");
 BlinkerButton LIGHT("light");
 
 BlinkerNumber BRIGHTNESS("brightness");
+
+BlinkerButton FRESH_IP("fresh_ip");
+BlinkerText IP1("ip1");
+BlinkerText IP2("ip2");
+BlinkerText IP3("ip3");
+BlinkerText IP4("ip4");
+
+bool fresh_ip = false;
+
+void freshIPCallback(const String &state) {
+    BLINKER_LOG("get button state: ", state);
+
+    fresh_ip = true;
+}
+
+// 通过手机是否连上wifi，判断房间是否有人（不够准确）
+bool pingCheck() {
+    if (Ping.ping(remote_ip1, 10)) {
+        return true;
+    } else if (Ping.ping(remote_ip2, 10)) {
+        return true;
+    } else if (Ping.ping(remote_ip3, 10)) {
+        return true;
+    } else if (Ping.ping(remote_ip4, 10)) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+int pingState() {
+    int count = 0;
+
+    if (Ping.ping(remote_ip1, 3)) {
+        IP1.print("在线");
+        count++;
+    } else {
+        IP1.print("离线");
+    }
+
+    if (Ping.ping(remote_ip2, 3)) {
+        IP2.print("在线");
+        count++;
+    } else {
+        IP2.print("离线");
+    }
+
+    if (Ping.ping(remote_ip3, 3)) {
+        IP3.print("在线");
+        count++;
+    } else {
+        IP3.print("离线");
+    }
+
+    if (Ping.ping(remote_ip4, 3)) {
+        IP4.print("在线");
+        count++;
+    } else {
+        IP4.print("离线");
+    }
+
+    return count;
+}
 
 void doorReport() {
     if (digitalRead(door_state_pin)) {
@@ -83,6 +147,7 @@ void blinkerSetup() {
 
     DOOR.attach(doorCallback);
     LIGHT.attach(lightCallback);
+    FRESH_IP.attach(freshIPCallback);
 }
 
 void blinkerLoop() {
@@ -118,5 +183,11 @@ void blinkerLoop() {
         lightNeu();
 
         light_on = light_off = light = false;
+    }
+
+    if (true == fresh_ip) {
+        pingState();
+
+        fresh_ip = false;
     }
 }
