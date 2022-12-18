@@ -1,5 +1,5 @@
-// 使用wifi方式接入blinker
-#define BLINKER_WIFI
+#define BLINKER_WIFI        // 使用wifi方式接入blinker
+#define BLINKER_MIOT_LIGHT  // 以灯的形式接入小爱同学音箱
 
 #include "blinker.h"
 
@@ -122,7 +122,6 @@ void lightCallback(const String &state) {
     } else if (state == BLINKER_CMD_OFF) {
         light_off = true;
     }
-    light = true;
 }
 
 void heartbeat() {
@@ -131,6 +130,84 @@ void heartbeat() {
     doorReport();
     lightReport();
     BRIGHTNESS.print(analogRead(brightness_pin));
+}
+
+void dataRead(const String &data) {
+    BLINKER_LOG("Blinker readString: ", data);
+}
+
+void miotPowerState(const String &state) {
+    BLINKER_LOG("need set power state: ", state);
+
+    if (state == BLINKER_CMD_ON) {
+        light_on = true;
+        BlinkerMIOT.powerState("on");
+        BlinkerMIOT.print();
+    } else if (state == BLINKER_CMD_OFF) {
+        light_off = true;
+        BlinkerMIOT.powerState("off");
+        BlinkerMIOT.print();
+    }
+}
+
+void miotBright(const String &bright) {
+    int colorW = bright.toInt();
+    BLINKER_LOG("now set brightness: ", colorW);
+
+    BlinkerMIOT.brightness(colorW);
+    BlinkerMIOT.print();
+
+    // 通过小爱同学自定义口令，将开门口令转化为设置灯的亮度
+    door_open_voice = true;
+}
+
+void miotQuery(int32_t queryCode) {
+    BLINKER_LOG("MIOT Query codes: ", queryCode);
+
+    switch (queryCode) {
+        case BLINKER_CMD_QUERY_ALL_NUMBER:
+            BLINKER_LOG("MIOT Query All");
+            BlinkerMIOT.powerState(light_state ? "on" : "off");
+            BlinkerMIOT.color(0);
+            BlinkerMIOT.mode(0);
+            BlinkerMIOT.colorTemp(1000);
+            BlinkerMIOT.brightness(1);
+            BlinkerMIOT.print();
+            break;
+        case BLINKER_CMD_QUERY_POWERSTATE_NUMBER:
+            BLINKER_LOG("MIOT Query Power State");
+            BlinkerMIOT.powerState(light_state ? "on" : "off");
+            BlinkerMIOT.print();
+            break;
+        case BLINKER_CMD_QUERY_COLOR_NUMBER:
+            BLINKER_LOG("MIOT Query Color");
+            BlinkerMIOT.color(0);
+            BlinkerMIOT.print();
+            break;
+        case BLINKER_CMD_QUERY_MODE_NUMBER:
+            BLINKER_LOG("MIOT Query Mode");
+            BlinkerMIOT.mode(0);
+            BlinkerMIOT.print();
+            break;
+        case BLINKER_CMD_QUERY_COLORTEMP_NUMBER:
+            BLINKER_LOG("MIOT Query ColorTemperature");
+            BlinkerMIOT.colorTemp(1000);
+            BlinkerMIOT.print();
+            break;
+        case BLINKER_CMD_QUERY_BRIGHTNESS_NUMBER:
+            BLINKER_LOG("MIOT Query Brightness");
+            BlinkerMIOT.brightness(1);
+            BlinkerMIOT.print();
+            break;
+        default:
+            BlinkerMIOT.powerState(light_state ? "on" : "off");
+            BlinkerMIOT.color(0);
+            BlinkerMIOT.mode(0);
+            BlinkerMIOT.colorTemp(1000);
+            BlinkerMIOT.brightness(1);
+            BlinkerMIOT.print();
+            break;
+    }
 }
 
 void blinkerSetup() {
@@ -143,17 +220,27 @@ void blinkerSetup() {
     Blinker.setTimezone(8.0);
 
     // 注册回调函数
+    Blinker.attachData(dataRead);
     Blinker.attachHeartbeat(heartbeat);
 
     DOOR.attach(doorCallback);
     LIGHT.attach(lightCallback);
     FRESH_IP.attach(freshIPCallback);
+
+    BlinkerMIOT.attachPowerState(miotPowerState);
+    BlinkerMIOT.attachBrightness(miotBright);
+    BlinkerMIOT.attachPowerState(miotPowerState);
 }
 
 void blinkerLoop() {
     Blinker.run();
 
-    if (true == door_open) {
+    if (true == door_open || true == door_open_voice) {
+        if (true == door_open_voice) {
+            if (false == pingCheck())
+                goto next;
+        }
+
         doorOpen();
 
         // 开门后自动判断是否开灯
@@ -170,7 +257,8 @@ void blinkerLoop() {
         door_open = false;
     }
 
-    if (true == light) {
+next:
+    if (true == light_on || true == light_off) {
         if (true == light_on) {
             lightOn();
         } else if (true == light_off) {
@@ -182,7 +270,7 @@ void blinkerLoop() {
         Blinker.delay(500);
         lightNeu();
 
-        light_on = light_off = light = false;
+        light_on = light_off = false;
     }
 
     if (true == fresh_ip) {

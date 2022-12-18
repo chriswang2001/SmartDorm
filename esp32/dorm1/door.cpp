@@ -3,6 +3,7 @@
 #include <Arduino.h>
 
 bool door_open = false;
+bool door_open_voice = false;
 
 void doorSetup() {
     ledcSetup(door_channel, door_freq, door_resolution);

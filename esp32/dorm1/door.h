@@ -20,3 +20,4 @@ void doorOpen();
 void doorClose();
 
 extern bool door_open;
+extern bool door_open_voice;

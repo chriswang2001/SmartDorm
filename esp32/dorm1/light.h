@@ -28,7 +28,6 @@ void lightOn();
 void lightOff();
 void lightNeu();
 
-extern bool light;
 extern bool light_on;
 extern bool light_off;
 extern bool light_state;

@@ -2,7 +2,6 @@
 
 #include <Arduino.h>
 
-bool light = false;
 bool light_on = false;
 bool light_off = false;
 bool light_state = false;
