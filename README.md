@@ -14,6 +14,12 @@
 - 舵机 SG90 x 3（开关灯x2 开门x1）
 - 磁珠 * 2
 
+## 软件平台
+
+- arduino
+- 开发板：ESP32 DEV MODULE
+- 库：BLINKER Adafruit_Fingerprint ESP32_PING
+
 ## 后续规划
 
 - 加入日志系统
