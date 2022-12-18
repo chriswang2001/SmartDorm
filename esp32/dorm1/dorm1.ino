@@ -3,6 +3,7 @@
 #include "blinker.h"
 #include "door.h"
 #include "dorm1.h"
+#include "finger.h"
 #include "light.h"
 #include "ota.h"
 
@@ -31,6 +32,7 @@ void setup(void) {
 
     lightSetup();
     doorSetup();
+    fingerSetup();
 
     blinkerSetup();
 }
@@ -38,4 +40,5 @@ void setup(void) {
 void loop(void) {
     otaLoop();
     blinkerLoop();
+    fingerLoop();
 }
