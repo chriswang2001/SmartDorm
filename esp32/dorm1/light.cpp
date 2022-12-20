@@ -8,6 +8,7 @@ bool light_state = false;
 
 void lightWrite(int light1_duty, int light2_duty) {
     ledcWrite(light1_channel, light1_duty);
+    delay(100);
     ledcWrite(light2_channel, light2_duty);
 }
 

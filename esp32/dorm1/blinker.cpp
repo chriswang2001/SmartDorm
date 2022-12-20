@@ -27,16 +27,6 @@ BlinkerText IP4("ip4");
 
 bool fresh_ip = false;
 
-void autoCallback() {
-    if (Blinker.hour() == 0 && Blinker.minute() <= (auto_time / 60)) {
-        light_off = true;
-    } else if (light_state == false && Blinker.hour() > hour_on &&
-               analogRead(brightness_pin) > brightness_on &&
-               true == pingCheck()) {
-        light_on = true;
-    }
-}
-
 void freshIPCallback(const String &state) {
     BLINKER_LOG("get button state: ", state);
 
@@ -90,6 +80,16 @@ int pingState() {
     }
 
     return count;
+}
+
+void autoCallback() {
+    if (Blinker.hour() == 0 && Blinker.minute() <= (auto_time / 60)) {
+        light_off = true;
+    } else if (light_state == false && Blinker.hour() > hour_on &&
+               analogRead(brightness_pin) > brightness_on &&
+               true == pingCheck()) {
+        light_on = true;
+    }
 }
 
 void doorReport() {
