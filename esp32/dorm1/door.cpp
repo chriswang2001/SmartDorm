@@ -6,6 +6,8 @@ bool door_open = false;
 bool door_open_voice = false;
 
 void doorSetup() {
+    Serial.printf("%s %d\n", __func__, __LINE__);
+
     ledcSetup(door_channel, door_freq, door_resolution);
     ledcAttachPin(door_pin, door_channel);
 
@@ -14,7 +16,10 @@ void doorSetup() {
 }
 
 void doorOpen() {
+    Serial.printf("%s %d\n", __func__, __LINE__);
+
     if (digitalRead(door_state_pin) == 0 || digitalRead(door_open_pin) == 0) {
+        Serial.printf("%s %d\n", __func__, __LINE__);
         return;
     }
 
@@ -24,6 +29,7 @@ void doorOpen() {
     int count = 0;
     do {
         if (digitalRead(door_open_pin) == 0) {
+            Serial.printf("%s %d\n", __func__, __LINE__);
             count++;
         } else {
             count = 0;
@@ -35,10 +41,13 @@ void doorOpen() {
 }
 
 void doorClose() {
+    Serial.printf("%s %d\n", __func__, __LINE__);
+
     // 多次连续判定，避免奇异值
     int count = 0;
     do {
         if (digitalRead(door_state_pin) == 1) {
+            Serial.printf("%s %d\n", __func__, __LINE__);
             count++;
         } else {
             count = 0;

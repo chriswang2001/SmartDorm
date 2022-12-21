@@ -10,10 +10,12 @@ bool finger_check = false;
 Adafruit_Fingerprint finger = Adafruit_Fingerprint(&Serial2);
 
 void fingerCheck() {
+    Serial.printf("%s %d\n", __func__, __LINE__);
     finger_check = true;
 }
 
 void fingerSetup() {
+    Serial.printf("%s %d\n", __func__, __LINE__);
     // set the data rate for the sensor serial port
     finger.begin(57600);
     delay(5);
@@ -130,6 +132,7 @@ uint8_t getFingerprintID() {
 
 // returns -1 if failed, otherwise returns ID #
 int getFingerprintIDez() {
+    Serial.printf("%s %d\n", __func__, __LINE__);
     uint8_t p = finger.getImage();
     if (p != FINGERPRINT_OK)
         return -1;
@@ -153,7 +156,9 @@ int getFingerprintIDez() {
 void fingerLoop()  // run over and over again
 {
     if (finger_check) {
-        if (getFingerprintID() > 0) {
+        Serial.printf("%s %d\n", __func__, __LINE__);
+        if (getFingerprintIDez() >= 0) {
+            Serial.printf("%s %d\n", __func__, __LINE__);
             door_open = true;
         }
 

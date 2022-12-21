@@ -11,7 +11,7 @@ int wechatmsg(String msg) {
         "?appToken=AT_GSU4EDjT5Ut8zyhBNl8uUArFgFn1iai8&topicId=3238&content=";
 
     msg.replace(" ", "%20");
-    Serial.printf("[HTTP] BEGIN... msg:%s", msg);
+    Serial.printf("[HTTP] BEGIN... msg:%s\n", msg);
     http.begin(url + msg);
 
     // start connection and send HTTP header

@@ -20,7 +20,7 @@ const int light_resolution = 10;  // 分辨率
 
 const int hour_on = 15;  // 最早开灯时间 h
 
-const int brightness_pin = 34;   // 光敏电阻输入端口
+const int brightness_pin = 34;  // 光敏电阻输入端口（读到数据越大，亮度越低）
 const int brightness_on = 2000;  // 光敏电阻阈值
 
 void lightSetup();

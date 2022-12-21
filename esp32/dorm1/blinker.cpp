@@ -35,64 +35,86 @@ void freshIPCallback(const String &state) {
 
 // 通过手机是否连上wifi，判断房间是否有人（不够准确）
 bool pingCheck() {
+    Serial.printf("%s %d\n", __func__, __LINE__);
+
     if (Ping.ping(remote_ip1, 10)) {
+        Serial.println("ping ip1 success!");
         return true;
     } else if (Ping.ping(remote_ip2, 10)) {
+        Serial.println("ping ip2 success!");
         return true;
     } else if (Ping.ping(remote_ip3, 10)) {
+        Serial.println("ping ip3 success!");
         return true;
     } else if (Ping.ping(remote_ip4, 10)) {
+        Serial.println("ping ip4 success!");
         return true;
-    } else {
-        return false;
     }
+
+    Serial.println("ping failed!\n");
+    return false;
 }
 
 int pingState() {
     int count = 0;
 
     if (Ping.ping(remote_ip1, 3)) {
+        Serial.println("ping ip1 success!");
         IP1.print("在线");
         count++;
     } else {
+        Serial.println("ping ip1 failed!");
         IP1.print("离线");
     }
 
     if (Ping.ping(remote_ip2, 3)) {
+        Serial.println("ping ip2 success!");
         IP2.print("在线");
         count++;
     } else {
+        Serial.println("ping ip2 failed!");
         IP2.print("离线");
     }
 
     if (Ping.ping(remote_ip3, 3)) {
+        Serial.println("ping ip3 success!");
         IP3.print("在线");
         count++;
     } else {
+        Serial.println("ping ip3 failed!");
         IP3.print("离线");
     }
 
     if (Ping.ping(remote_ip4, 3)) {
+        Serial.println("ping ip4 success!");
         IP4.print("在线");
         count++;
     } else {
+        Serial.println("ping ip4 failed!");
         IP4.print("离线");
     }
 
+    Serial.printf("ping success count: %d\n", count);
     return count;
 }
 
 void autoCallback() {
+    Serial.printf("%s %d\n", __func__, __LINE__);
+
     if (Blinker.hour() == 0 && Blinker.minute() <= (auto_time / 60)) {
+        Serial.printf("%s %d\n", __func__, __LINE__);
         light_off = true;
     } else if (light_state == false && Blinker.hour() > hour_on &&
                analogRead(brightness_pin) > brightness_on &&
                true == pingCheck()) {
+        Serial.printf("%s %d\n", __func__, __LINE__);
         light_on = true;
     }
 }
 
 void doorReport() {
+    Serial.printf("%s %d\n", __func__, __LINE__);
+
     if (digitalRead(door_state_pin)) {
         DOOR.icon("fad fa-door-closed");
         DOOR.color("#076EEF");
@@ -115,6 +137,8 @@ void doorCallback(const String &state) {
 }
 
 void lightReport() {
+    Serial.printf("%s %d\n", __func__, __LINE__);
+
     if (true == light_state) {
         LIGHT.icon("fad fa-lightbulb-on");
         LIGHT.color("#FBA713");
@@ -225,9 +249,11 @@ void miotQuery(int32_t queryCode) {
 }
 
 void blinkerSetup() {
+    Serial.printf("%s %d\n", __func__, __LINE__);
+
     // 初始化blinker
     BLINKER_DEBUG.stream(Serial);
-    BLINKER_DEBUG.debugAll();
+    // BLINKER_DEBUG.debugAll();
     Blinker.begin(auth, ssid, pswd);
 
     // 设置时区 保证blinker.hour能够获取到正确时间
@@ -251,7 +277,9 @@ void blinkerLoop() {
     Blinker.run();
 
     if (true == door_open || true == door_open_voice) {
+        Serial.printf("%s %d\n", __func__, __LINE__);
         if (true == door_open_voice) {
+            Serial.printf("%s %d\n", __func__, __LINE__);
             if (false == pingCheck())
                 goto next;
         }
@@ -259,10 +287,11 @@ void blinkerLoop() {
         doorOpen();
 
         // 开门后自动判断是否开灯
-        int8_t hour = Blinker.hour();
-        if (hour > hour_on && analogRead(brightness_pin) > brightness_on) {
-            lightOn();
+        if (Blinker.hour() > hour_on &&
+            analogRead(brightness_pin) > brightness_on) {
+            Serial.printf("%s %d\n", __func__, __LINE__);
             Blinker.delay(1000);
+            lightOn();
         } else {
             Blinker.delay(2000);
         }
@@ -274,6 +303,7 @@ void blinkerLoop() {
 
 next:
     if (true == light_on || true == light_off) {
+        Serial.printf("%s %d\n", __func__, __LINE__);
         if (true == light_on) {
             lightOn();
         } else if (true == light_off) {
@@ -289,6 +319,7 @@ next:
     }
 
     if (true == fresh_ip) {
+        Serial.printf("%s %d\n", __func__, __LINE__);
         pingState();
 
         fresh_ip = false;
