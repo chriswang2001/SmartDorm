@@ -19,6 +19,7 @@ void doorOpen() {
     Serial.printf("%s %d\n", __func__, __LINE__);
 
     if (digitalRead(door_state_pin) == 0 || digitalRead(door_open_pin) == 0) {
+        Serial.printf("门框:%d 门舌:%d\n", digitalRead(door_state_pin), digitalRead(door_open_pin));
         Serial.printf("%s %d\n", __func__, __LINE__);
         return;
     }
@@ -32,10 +33,11 @@ void doorOpen() {
             Serial.printf("%s %d\n", __func__, __LINE__);
             count++;
         } else {
+            Serial.printf("%s %d\n", __func__, __LINE__);
             count = 0;
         }
         delay(5);
-    } while (count > 10);
+    } while (count < 10);
 
     ledcWrite(door_channel, 0);
 }
@@ -50,11 +52,13 @@ void doorClose() {
             Serial.printf("%s %d\n", __func__, __LINE__);
             count++;
         } else {
+            Serial.printf("%s %d\n", __func__, __LINE__);
             count = 0;
         }
         delay(5);
-    } while (count > 100);
+    } while (count < 10);
 
+    Serial.printf("%s %d\n", __func__, __LINE__);
     ledcWrite(door_channel, door_off_duty);
     delay(door_close_time);
     ledcWrite(door_channel, 0);
