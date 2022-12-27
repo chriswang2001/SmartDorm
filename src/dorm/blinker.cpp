@@ -8,7 +8,7 @@
 #include <Ticker.h>
 
 #include "door.h"
-#include "dorm1.h"
+#include "dorm.h"
 #include "light.h"
 #include "msg.h"
 
