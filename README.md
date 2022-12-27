@@ -12,17 +12,14 @@
 - 光敏电阻
 - 红外控制器
 - 舵机 SG90 x 3（开关灯x2 开门x1）
-- 磁珠 * 2
+- 干簧管 * 2（磁铁）
 
 ## 软件平台
 
-- arduino
+- arduino IDE
 - 开发板：ESP32 DEV MODULE
-- 库：BLINKER Adafruit_Fingerprint ESP32_PING
+- 库：BLINKER Adafruit_Fingerprint ESP32Ping
 
 ## 后续规划
 
-- 加入日志系统
 - 搭建硬件系统 拍摄图片
-- 加入添加、删除指纹功能 不用上位机
-- 自动开关空调（温度低或高自动开空调、晚上定时关空调）
